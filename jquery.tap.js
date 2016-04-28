@@ -1,32 +1,9 @@
 /**
- * @fileOverview
- * Copyright (c) 2013 Aaron Gloege
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
- * OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * jQuery Tap Plugin
- * Using the tap event, this plugin will properly simulate a click event
- * in touch browsers using touch events, and on non-touch browsers,
- * click will automatically be used instead.
- *
+change by skyshore:
+
+- dont emit event if there's offset 
+- use tap instead of click on mobile.
+
  * @author Aaron Gloege
  * @version 1.0
  */
@@ -39,7 +16,11 @@
      * @type {boolean}
      * @constant
      */
-    var TOUCH = $.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+    var isMobile = navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i);
+    var TOUCH = $.support.touch = ('ontouchstart' in window && isMobile);
+    if (!TOUCH) {
+        return;
+    }
 
     /**
      * Event namespace
@@ -55,7 +36,7 @@
      * @type {string}
      * @constant
      */
-    var EVENT_NAME = 'tap';
+    var EVENT_NAME = 'click';
 
     /**
      * Event variables to copy to touches
@@ -227,7 +208,13 @@
          * @param {jQuery.Event} e
          */
         onTouchEnd: function(e) {
-            if (
+            var isTap = false;
+            var touches = e.originalEvent.changedTouches;
+            if (touches && touches[0]) {
+                isTap = (touches[0].pageX == TOUCH_VALUES.x && touches[0].pageY == TOUCH_VALUES.y);
+            }
+
+            if (isTap &&
                 !TOUCH_VALUES.cancel &&
                 TOUCH_VALUES.count === 1 &&
                 Tap.isTracking
@@ -257,55 +244,5 @@
             Tap.enable();
         }
     };
-
-    // If we are not in a touch compatible browser, map tap event to the click event
-    if (!TOUCH) {
-
-        /**
-         * Click event ID's that have already been converted to a tap
-         *
-         * @type {object}
-         * @private
-         */
-        var _converted = [];
-
-        /**
-         * Convert click events into tap events
-         *
-         * @param {jQuery.Event} e
-         * @private
-         */
-        var _onClick = function(e) {
-            var originalEvent = e.originalEvent;
-            if (e.isTrigger || _converted.indexOf(originalEvent) >= 0) {
-                return;
-            }
-
-            // limit size of _converted array
-            if (_converted.length > 3) {
-                _converted.splice(0, _converted.length - 3);
-            }
-
-            _converted.push(originalEvent);
-
-            var event = _createEvent(EVENT_NAME, e);
-            $(e.target).trigger(event);
-        };
-
-        // Bind click events that will be converted to a tap event
-        //
-        // Would have liked to use the bindType and delegateType properties
-        // to map the tap event to click events, but this does not allow us to prevent the
-        // tap event from triggering when a click event is manually triggered via .trigger().
-        // Tap should only trigger if the user physically clicks.
-        $.event.special[EVENT_NAME] = {
-            setup: function() {
-                $(this).on('click' + HELPER_NAMESPACE, _onClick);
-            },
-            teardown: function() {
-                $(this).off('click' + HELPER_NAMESPACE, _onClick);
-            }
-        };
-    }
 
 }(document, jQuery));
