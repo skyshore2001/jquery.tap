@@ -16,7 +16,7 @@ change by skyshore:
      * @type {boolean}
      * @constant
      */
-    var isMobile = navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i);
+    var isMobile = navigator.userAgent.match(/(iPhone|iPad|Android)/i);
     var TOUCH = $.support.touch = ('ontouchstart' in window && isMobile);
     if (!TOUCH) {
         return;
