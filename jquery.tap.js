@@ -237,11 +237,26 @@ change by skyshore:
 
     };
 
+    var bak = $.event.special.click;
     // Setup special event and enable
     // tap only if a tap event is bound
     $.event.special[EVENT_NAME] = {
         setup: function() {
             Tap.enable();
+        },
+        _default: function (ev) {
+            // use default behaviour if triggered in code:
+            if (ev.originalEvent == null) {
+                if (bak._default && bak._default.call(this, ev) !== false)
+                    return;
+                return false;
+            }
+
+            // disable the default behaviour by default
+        },
+        trigger: function (ev) {
+            if (ev.originalEvent == null && bak.trigger)
+                return bak.trigger.call(this, ev);
         }
     };
 
