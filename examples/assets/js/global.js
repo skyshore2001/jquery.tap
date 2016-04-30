@@ -5,8 +5,8 @@
 
         var $touchInner = $('.touch-inner');
 
-        $('.touch-area').on('tap', function(e) {
-            console.log('tap event', e);
+        $('.touch-area').on('click', function(e) {
+            console.log('click/tap event', e);
             $touchInner.prepend("Tap {\n    x: " + e.pageX + ",\n    y: " + e.pageY + "\n};\n");
         });
 

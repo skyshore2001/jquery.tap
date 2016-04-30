@@ -1,7 +1,18 @@
 # jQuery.tap
 
+A jQuery plugin that replaces "click" event with "tap" event *transparently* for touch enabled browsers.
+
+If you find your "click" event handler slow on touch device (caused by 300ms-delay problem), you can just add this JS library *without changing any code*.
+
+The "tap" event is simulated by "touchend" event. This project is a fork of jQuery.tap plugin:
+
 http://aarongloege.github.com/jquery.tap/
 A jQuery plugin that creates a click alternative for touch enabled browsers.
+
+My change:
+
+- Support fast "click" event. You don't need replace "click" event with "tap" manually.
+- On desktop web browser, this plugin does nothing, which means the native click event is used.
 
 ## Why?
 
@@ -9,31 +20,31 @@ Click events on touch devices do not work the best. There is a 300ms delay from 
 
 ## How do I use it?
 
-What is nice about this plugin, and what makes it different from other plugins, is that it takes advantage of jQuery's special event API, so you can use `jQuery.on` to bind events.
+Just add this JS library, then your 'click' handler turns faster.
 
 ```javascript
 // jQuery.on method
-$('.element').on('tap', onTapHandler);
-$('.element').on('tap', dataObject, onTapHandler);
+$('.element').on('click', onTapHandler);
+$('.element').on('click', dataObject, onTapHandler);
 ```
 
 And, because the event is bound through jQuery's `on` API, you can take advantage of namespaces and delegate events:
 
 ```javascript
 // Namespace
-$('.element').on('tap.widget', onTapHandler);
-$('.element').on('tap.widget', dataObject, onTapHandler);
+$('.element').on('click.widget', onTapHandler);
+$('.element').on('click.widget', dataObject, onTapHandler);
 
 // Delegate
-$('.element').on('tap', '.child-element', onTapHandler);
-$('.element').on('tap', '.child-element', dataObject, onTapHandler);
+$('.element').on('click', '.child-element', onTapHandler);
+$('.element').on('click', '.child-element', dataObject, onTapHandler);
 
 // Together now
-$('.element').on('tap.widget', '.child-element', onTapHandler);
-$('.element').on('tap.widget', '.child-element', dataObject, onTapHandler);
+$('.element').on('click.widget', '.child-element', onTapHandler);
+$('.element').on('click.widget', '.child-element', dataObject, onTapHandler);
 ```
 
-The tap event will also bubble.
+The event will also bubble.
 
 ## What About Desktop?
 
