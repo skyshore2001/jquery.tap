@@ -14,6 +14,11 @@ My change:
 - Support fast "click" event. You don't need replace "click" event with "tap" manually.
 - On desktop web browser, this plugin does nothing, which means the native click event is used.
 
+NOTE:
+
+- This plugin does not work on the Weixin explore.
+- This plugin does not handle the "onclick" property or "<a>" tag with "href" property.
+
 ## Why?
 
 Click events on touch devices do not work the best. There is a 300ms delay from when you release your finger to the time the click event is triggered. This behavior is not desired.

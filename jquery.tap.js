@@ -17,7 +17,8 @@ change by skyshore:
      * @constant
      */
     var isMobile = navigator.userAgent.match(/(iPhone|iPad|Android)/i);
-    var TOUCH = $.support.touch = ('ontouchstart' in window && isMobile);
+    var isWeixin = navigator.userAgent.match(/MicroMessenger/i); /* NOTE: dont support weixin explorer that cannot handle click/tap correctly. */
+    var TOUCH = $.support.touch = ('ontouchstart' in window && isMobile && !isWeixin);
     if (!TOUCH) {
         return;
     }
